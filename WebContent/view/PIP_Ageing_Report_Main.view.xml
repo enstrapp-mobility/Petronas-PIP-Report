@@ -1,0 +1,159 @@
+<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core"
+	xmlns:ta="sap.ui.table" xmlns:mvc="sap.ui.core.mvc"
+	controllerName="ZEMT_AM_PIP_APP.controller.PIP_Ageing_Report_Main">
+	<App>
+		<pages>
+			<Page id="page" showHeader="false">
+				<content>
+					<OverflowToolbar class="homePageToolBar">
+						<Image src="./images/petronasLogo.png" class="logo"></Image>
+						<ToolbarSpacer />
+						<Label text="{i18n>ApplicationTitle}" class="headerText"></Label>
+						<ToolbarSpacer />
+						<Button icon="sap-icon://decline" text="{i18n>btn_Exit}"
+							press="ExitAction" class="buttonClass" type="Reject"></Button>
+						<Button icon="sap-icon://save" text="{i18n>btn_Save}" visible = "false"
+							id="Save_btn" press="on_Save" class="buttonClass" type="Accept"></Button>
+					</OverflowToolbar>
+				</content>
+				<ta:Table id="Pip_Ageing_Report_Table"
+					selectionMode="None" rows="{/}" filter="filterPrice"
+					sort="sortDeliveryDate" ariaLabelledBy="title">
+					<ta:extension>
+						<OverflowToolbar>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://multi-select" text="Layout"
+								visible="false" press="AssetRequestsColumnsPopoverPress"
+								tooltip="Layout" type="Transparent" class="TransparentBtn" />
+
+							<Button icon="sap-icon://refresh" press="ReferehData"
+								text="{i18n>btn_Refresh}" tooltip="{i18n>btn_Refresh}"
+								type="Transparent" class="TransparentBtn" />
+
+							<Button icon="sap-icon://search" text="{i18n>btn_Search}"
+								press="Search_Records" tooltip="Search" type="Transparent"
+								class="TransparentBtn" />
+
+
+
+						</OverflowToolbar>
+					</ta:extension>
+					<ta:columns>
+				<ta:Column width="8rem">
+							<Label text="{i18n>Project}" design="Bold" />
+							<ta:template>
+								<Text text="{Pspid}"/>
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="7rem">
+							<Label text="{i18n>PIPAssetNumber}" design="Bold" />
+							<ta:template>
+								<Text text="{Anln1}" />
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="10rem">
+							<Label text="{i18n>PIPAssetName}" design="Bold" />
+							<ta:template>
+								<Text text="{Txt50}" />
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="7rem">
+							<Label text="{i18n>SubAsset}" design="Bold" />
+							<ta:template>
+								<Text text="{Anln2}" />
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="8rem">
+							<Label text="{i18n>WbsNo}" design="Bold" />
+							<ta:template>
+								<Text text="{Posid}" />
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="8rem">
+							<Label text="{i18n>WbsName}" design="Bold" />
+							<ta:template>
+								<Text text="{Post1}" />
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="8rem">
+							<Label text="{i18n>ProjectCost}" design="Bold" />
+							<ta:template>
+								<Text text="{Prjcost}" />
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="15rem">
+							<Label text="{i18n>ApprovedRevisedProjectCost}"
+								design="Bold" />
+							<ta:template>
+								<Text text="{Rprjcost}" />
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="14rem" filterProperty="Bukrs"
+							sortProperty="Bukrs">
+							<Label text="{i18n>ApprovedBudgetforFY}" design="Bold" />
+							<ta:template>
+							<Text text="{Wert1}" />
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="7rem">
+							<Label text="{i18n>PIPBalance}" design="Bold" />
+							<ta:template>
+								<Text text="{Answt}" />
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="10rem">
+							<Label text="{i18n>YEP}" design="Bold" />
+							<ta:template>
+							<Text text="{Yepcost}" />
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="10rem">
+							<Label text="{i18n>ReportingDate}"
+								design="Bold" />
+							<ta:template>
+								<Text text="{path: 'Repdate', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatddmmyyy'}"/>
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="10rem">
+							<Label text="{i18n>CompletionDate}" design="Bold" />
+							<ta:template>
+							<Text text="{path: 'Compd', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatddmmyyy'}"/>
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="14rem">
+							<Label text="{i18n>RevisedCompletionDate}" design="Bold" />
+							<ta:template>
+							<Text text=" {path: 'Rcompd', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatddmmyyy'}"/>
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="9rem">
+							<Label text="{i18n>PercentageofCompletion(%)}"
+								design="Bold" />
+							<ta:template>
+							<Text text="{Prozs}" />
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="7rem" filterProperty="Werk"
+							sortProperty="Werk">
+							<Label text="{i18n>Status}" design="Bold" />
+							<ta:template>
+								<Text text="{Pstatus}" />
+							</ta:template>
+						</ta:Column>
+
+						<ta:Column width="8rem">
+							<Label text="{i18n>Ageing}" design="Bold" />
+							<ta:template>
+								<Text text="{Dageing}" />
+							</ta:template>
+						</ta:Column>
+					</ta:columns>
+				</ta:Table>
+				<DatePicker id="HiddenDP" hideInput="true"
+					showCurrentDateButton="true" showFooter="false"
+					valueFormat="dd-MMM-yyyy" change="changeDateHandler" />
+
+			</Page>
+		</pages>
+	</App>
+</mvc:View>
