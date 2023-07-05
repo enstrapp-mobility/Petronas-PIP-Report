@@ -61,6 +61,7 @@ sap.ui.define(["ZEMT_AM_PIP_APP/controller/BaseController", "ZEMT_AM_PIP_APP/For
 				return false;
 			}
 			setTimeout(function() {
+			//	jQuery.sap.that.UserMaster();
 				var GetMasterData = new sap.ui.model.odata.ODataModel(jQuery.sap.Service_URL.getServiceUrl("ZEMT_AMAPP_SRV/"), true);
 				GetMasterData.setHeaders({
 					"muser": jQuery.sap.O_Login_user.Muser,
@@ -140,7 +141,8 @@ sap.ui.define(["ZEMT_AM_PIP_APP/controller/BaseController", "ZEMT_AM_PIP_APP/For
 					Core.byId("VhCostCenterId").setModel(CostCenterJson);
 					Core.byId("VhAssetClassId").setModel(AssetClassJson);
 					Core.byId("VhLocationId").setModel(LocationJson);
-					
+					Core.byId("Plant").setModel(PlantsJson);
+					Core.byId("CompanyCode").setModel(CompanyCodeJson);
 					jQuery.sap.PIP_Report_Search.open();
 					jQuery.sap.that.showDocument();
 				}, function(oError) {
@@ -150,6 +152,38 @@ sap.ui.define(["ZEMT_AM_PIP_APP/controller/BaseController", "ZEMT_AM_PIP_APP/For
 		},
 		onAfterRendering: function() {
 			
+		},
+		UserMaster: function(key) {
+			var Fyear, Atrnid, Bukrs, Anlkl, Kostl, Werks, Mass_Data, timeout;
+			timeout = 0;
+			var UserMaster = new sap.ui.model.odata.ODataModel(jQuery.sap.Service_URL.getServiceUrl("ZEMT_AMAPP_SRV/"), true);
+			UserMaster.setHeaders({
+				"Muser": jQuery.sap.O_Login_user.Muser,
+				"Uname": jQuery.sap.O_Login_user.Muser,
+				"Bukrs": Bukrs,
+				"Anlkl": Anlkl,
+				"Kostl": Kostl,
+				"Werks": Werks,
+				"Atrnid": Atrnid,
+				"Fyear": Fyear,
+				"Doctype": "ASSET",
+				"Action": Action,
+			});
+			setTimeout(function() {
+				UserMaster.read("GetUserMasterSet?$expand=EtUserBukrs,EtUserWorkflow&$format=json", null, "", true, function(oData, oResponse) {
+					var view = Core.that.getView();
+					Core.A_UserMasterData = oData.results[0];
+					var CompanyCode = Core.A_UserMasterData.EtUserBukrs.results;
+					var CompanyCode_Model = new JSONModel(CompanyCode);
+					CompanyCode_Model.iSizeLimit = 10000;
+					var EtUserWorkflow = Core.A_UserMasterData.EtUserWorkflow.results;
+					var EtUserWorkflow_Model = new JSONModel(EtUserWorkflow);
+					EtUserWorkflow_Model.iSizeLimit = 10000;
+					Core.byId("CompanyCode").setModel(CompanyCode_Model);
+					
+				}, function(err) {
+				});
+			}, timeout);
 		},
 		VhCompanyCodeChange: function(oEvent) {
 			Core.byId("VhAssetClassId").setSelectedKey("");
@@ -242,8 +276,8 @@ sap.ui.define(["ZEMT_AM_PIP_APP/controller/BaseController", "ZEMT_AM_PIP_APP/For
 			informationDialog.open();
 		},
 		ReferehData : function(){
-			var ProjectNo = Core.byId("ProjNoId").getValue();
-			if(ProjectNo == "") {
+			var CompanyCode = Core.byId("CompanyCode").getValue();
+			if(CompanyCode == "") {
 				jQuery.sap.PIP_Report_Search.open();
 			} else{
 				MessageBox.confirm(jQuery.sap.i18n.getText("RefershText"), {
@@ -267,31 +301,68 @@ sap.ui.define(["ZEMT_AM_PIP_APP/controller/BaseController", "ZEMT_AM_PIP_APP/For
 			var ProjectNo = Core.byId("ProjNoId").getValue();
 			var pipp_Asset = Core.byId("Asset_id").getValue();
 			var ReportingDate = Core.byId("ReportingDate_id").getValue();
+			var CompanyCode =  Core.byId("CompanyCode").getSelectedKey();
+			var plant =  Core.byId("Plant").getSelectedKey();
 			wbsNo == '' && (Core.Posid = '');
-			if(ProjectNo == "") {
-				MessageBox.information(jQuery.sap.i18n.getText("ProjectNoMandatoryTxt"));
+			if(CompanyCode.length == 0) {
+				MessageBox.information(jQuery.sap.i18n.getText("CompanyCodeMandatoryTxt"));
 				return false;
 			}  else {
 				jQuery.sap.DataLoadProgress.open();
 				var EntityInputs = [];
+				/*var CostCenterArray = [];
+				var CompanyCodeArray = [];
+				for(var i = 0; i < CompanyCode.length; i++) {
+					var data = "Bukrs eq '".concat(CompanyCode[i].mProperties.key).concat("'");
+					CompanyCodeArray.push(data);
+				}
+				if(CompanyCodeArray.length > 0) {
+					var CompanyCodeString = CompanyCodeArray.toString();
+					CompanyCodeString = CompanyCodeString.split(',').join(' or ');
+					CompanyCodeString = "(" + CompanyCodeString + ")";
+					EntityInputs.push(CompanyCodeString);
+				}
+				var PlanningPlantArray = [];
+				for(var i = 0; i < plant.length; i++) {
+					var data = "Werks eq '".concat(plant[i].mProperties.key).concat("'");
+					PlanningPlantArray.push(data);
+				}
+				if(PlanningPlantArray.length > 0) {
+					var PlanningPlantString = PlanningPlantArray.toString();
+					PlanningPlantString = PlanningPlantString.split(',').join(' or ');
+					PlanningPlantString = "(" + PlanningPlantString + ")";
+					EntityInputs.push(PlanningPlantString);
+				}*/
+			if(CompanyCode != "") {
+				var data = "Bukrs eq '".concat(CompanyCode).concat("'");
+				EntityInputs.push(data);
+			}
+			if(plant != "") {
+				var data = "Werks eq '".concat(plant).concat("'");
+				EntityInputs.push(data);
+			}
 				if(ProjectNo != "") {
 					var data = "Pspid eq '".concat(ProjectNo).concat("'");
 					EntityInputs.push(data);
-					var data = "Bukrs eq '".concat(Core.Bukrs).concat("'");
+				/*	var data = "Bukrs eq '".concat(Core.Bukrs).concat("'");
 					EntityInputs.push(data);
 					var data = "Anln2 eq '".concat(Core.Anln2).concat("'");
-					EntityInputs.push(data);
+					EntityInputs.push(data);*/
 				}
 				if(wbsNo != "") {
-					var data = "Posid eq '".concat(Core.Posid).concat("'");
+					if(wbsNo.includes(".")){
+						var data = "Posid eq '".concat(wbsNo).concat("'");
+					}else{
+						var data = "Posid eq '".concat(Core.Posid).concat("'");
+					}
 					EntityInputs.push(data);
 				}
-				if(pipp_Asset != "") {
+				/*if(pipp_Asset != "") {
 					var data = "Anln1 eq '".concat(pipp_Asset).concat("'");
 					EntityInputs.push(data);
-				}
+				}*/
 				if(ReportingDate != ""){
-					var data = "Repdate eq '".concat(jQuery.sap.DateFormat_yyyymmdd.format(new Date(ReportingDate))).concat("'");
+					var data = "Rdate eq '".concat(jQuery.sap.DateFormat_yyyymmdd.format(new Date(ReportingDate))).concat("'");
 					EntityInputs.push(data);
 				}
 				var EntityValue = "GetProjPIPReqSet?$expand=EtProjPIPData";
@@ -348,23 +419,6 @@ sap.ui.define(["ZEMT_AM_PIP_APP/controller/BaseController", "ZEMT_AM_PIP_APP/For
 				oEvent.getSource().setValue("");
 			}
 		},
-		// Submit operation
-		RemarksClose: function() {
-			jQuery.sap.F4_EnterRemarks.close();
-		},
-		ApprovePress: function() {
-			var RemarksMsg = jQuery.sap.i18n.getText("RemarksMsg");
-			var remarks = Core.byId("RemarksId").getValue();
-			if(remarks == "") {
-				MessageBox.information(RemarksMsg);
-			} else {
-				jQuery.sap.F4_EnterRemarks.close();
-				jQuery.sap.that.SubmitAction();
-			}
-		},
-		
-		
-	
 		AssetValueHelp: function(oEvent) {
 			jQuery.sap.F4_AssetSearch.open();
 			this.ClearBtnPress();
@@ -547,134 +601,14 @@ sap.ui.define(["ZEMT_AM_PIP_APP/controller/BaseController", "ZEMT_AM_PIP_APP/For
 			}
 		},
 		Clear_Serach : function (){
+			Core.byId("CompanyCode").setSelectedKey();
+			Core.byId("Plant").setSelectedKey();
+			Core.byId("ReportingDate_id").setValue();
 			Core.byId("WBSNoId").setValue();
 			Core.byId("ProjNoId").setValue();
 			Core.byId("Asset_id").setValue();
 		},
 		// Excel 
-		ExcelUpdatePress: function() {
-			var DataModel = this.getView().byId("AssetListDataTable").getModel();
-			var DataTable = [];
-			if(DataModel != undefined) {
-				DataTable = DataModel.getData();
-			}
-			if(DataTable.length != 0) {
-				var informationDialog = new Dialog({
-					title: jQuery.sap.i18n.getText("MsgWarning"),
-					type: 'Message',
-					state: 'Warning',
-					content: new sap.m.Text({
-						text: jQuery.sap.i18n.getText("DataErased")
-					}),
-					beginButton: new sap.m.Button({
-						text: jQuery.sap.i18n.getText("MsgYes"),
-						type: 'Accept',
-						press: function() {
-							jQuery.sap.F4_ExcelUpload.open();
-							informationDialog.close();
-						}
-					}),
-					endButton: new sap.m.Button({
-						text: jQuery.sap.i18n.getText("MsgNo"),
-						type: 'Reject',
-						press: function() {
-							informationDialog.close();
-						}
-					}),
-					afterClose: function() {
-						informationDialog.destroy();
-					}
-				});
-				informationDialog.open();
-			} else {
-				jQuery.sap.F4_ExcelUpload.open();
-			}
-		},
-		ExcelUploadClose: function() {
-			jQuery.sap.F4_ExcelUpload.close();
-		},
-		// Upload Excel
-		ExcelUpload: function(e) {
-			var that = this;
-			var excelData = {};
-			var fileContent = e.getParameter("files") && e.getParameter("files")[0];
-			if(fileContent && window.FileReader) {
-				var reader = new FileReader();
-				reader.onload = function(e) {
-					var data = e.target.result;
-					var workbook = XLSX.read(data, {
-						type: 'binary'
-					});
-					workbook.SheetNames.forEach(function(sheetName) {
-						// Here is your object for every sheet in workbook
-						excelData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-					});
-					var excel_arr = [];
-					var length = excelData.length;
-					for(let i = 0; i < length; i++) {
-						var obj = {};
-						var ExcelData = excelData[i];
-						obj.Bukrs = ExcelData['Company Code'];
-						obj.Xblnr = ExcelData['Reference'];
-						obj.Bzdat = ExcelData['Value Date'];
-						obj.Posid = ExcelData['WBS No'];
-						obj.Post1 = ExcelData['WBS Name'];
-						obj.Anln1 = ExcelData['Asset No'];
-						obj.Anln2 = ExcelData['Sub Asset No'];
-						obj.Anbtr = ExcelData['Amount'];
-						obj.Prozs = ExcelData['% Cost Allocation'];
-						
-						obj.Bukrs != undefined ? obj.Bukrs = unescape(obj.Bukrs) : obj.Bukrs = "";
-						obj.Xblnr != undefined ? obj.Xblnr = unescape(obj.Xblnr) : obj.Xblnr = "";
-						obj.Bzdat != undefined ? obj.Bzdat = unescape(obj.Bzdat) : obj.Bzdat = "";
-						obj.Posid != undefined ? obj.Posid = unescape(obj.Posid) : obj.Posid = "";
-						obj.Post1 != undefined ? obj.Post1 = unescape(obj.Post1) : obj.Post1 = "";
-						obj.Anln1 != undefined ? obj.Anln1 = unescape(obj.Anln1) : obj.Anln1 = "";
-						obj.Anln2 != undefined ? obj.Anln2 = unescape(obj.Anln2) : obj.Anln2 = "";
-						obj.Anbtr != undefined ? obj.Anbtr = unescape(obj.Anbtr) : obj.Anbtr = "";
-						obj.Prozs != undefined ? obj.Prozs = unescape(obj.Prozs) : obj.Prozs = "";
-						
-						excel_arr.push(obj);
-					}
-				
-					var is_Model_exist = jQuery.sap.that.getView().byId("Proj_comp_table").getModel();
-					if(is_Model_exist != undefined){
-						var Data = jQuery.sap.that.getView().byId("Proj_comp_table").getModel().getData();
-						jQuery.sap.that.ProjComp_arr = jQuery.sap.that.ProjComp_arr.concat(excel_arr);
-						var model = new JSONModel(jQuery.sap.that.ProjComp_arr);
-						jQuery.sap.that.getView().byId("Proj_comp_table").setModel(model);
-					}else{
-						jQuery.sap.that.ProjComp_arr = excel_arr;
-						var model = new JSONModel(jQuery.sap.that.ProjComp_arr);
-						jQuery.sap.that.getView().byId("Proj_comp_table").setModel(model);
-					}
-					Core.byId("ExcelUploadId").setValue("");
-					jQuery.sap.F4_ExcelUpload.close();
-				};
-				reader.onerror = function(ex) {
-					Core.byId("ExcelUploadId").setValue("");
-					jQuery.sap.F4_ExcelUpload.close();
-					sap.m.MessageBox.error(ex);
-				};
-				reader.readAsBinaryString(fileContent);
-			}
-		},
-		AssetDeletePress: function() {
-			var DataTable = this.getView().byId("AssetListDataTable");
-			var SelectedContext = DataTable.getSelectedIndices();
-			var SelectedContextLength = SelectedContext.length;
-			var AssetData = DataTable.getModel().getData();
-			for(var j = SelectedContextLength - 1; j >= 0; j--) {
-				AssetData.splice(SelectedContext[j], 1);
-			}
-			DataTable.clearSelection();
-			var DataLength = AssetData.length;
-			for(var i = 0; i < DataLength; i++) {
-				var Fenum = i + 1;
-				AssetData[i].Fenum = Fenum.toString();
-			}
-			DataTable.getModel().refresh(true);
-		},
 		AddNewAssetPress: function() {
 			jQuery.sap.F4_AddNewAsset.open();
 			var EtCompanyCode = jQuery.sap.A_MasterDataForF4Helps.EtCompanyCode.results;
@@ -707,197 +641,8 @@ sap.ui.define(["ZEMT_AM_PIP_APP/controller/BaseController", "ZEMT_AM_PIP_APP/For
 		AddNewAssetClose: function() {
 			jQuery.sap.F4_AddNewAsset.close();
 		},
-		AddAsset: function() {
-			var CompanyCode = Core.byId("NewAssetCompanyCode").getSelectedKey();
-			var AssetClass = Core.byId("NewAssetClassId").getSelectedKey();
-			var CostCenter = Core.byId("NewAssetCostCenter").getSelectedKey();
-			var Unit = Core.byId("NewAssetBaseUnit").getSelectedKey();
-			var Plant = Core.byId("NewAssetPlaningPlantId").getSelectedKey();
-			var WBSNo = Core.byId("NewAssetWBSNoId").getSelectedKey();
-			var Asset = Core.byId("NewAssetAsset").getValue();
-			var SubAsset = Core.byId("NewAssetSubAsset").getValue();
-			var Quantity = Core.byId("NewAssetQuantity").getValue();
-			var Name = Core.byId("NewAssetNameId").getValue();
-			if(CompanyCode == "") {
-				var Msg = jQuery.sap.i18n.getText("CompanyCodeMandatoryTxt");
-				MessageBox.information(Msg);
-			} else if(AssetClass == "") {
-				var Msg = jQuery.sap.i18n.getText("AsserClassMandatoryTxt");
-				MessageBox.information(Msg);
-			} else {
-				var DataModel = this.getView().byId("AssetListDataTable").getModel();
-				var DataTable = [];
-				if(DataModel != undefined) {
-					DataTable = DataModel.getData();
-				}
-				var Sno = 0;
-				var DataTableLength = DataTable.length;
-				if(DataTableLength == 0) {
-					Sno = 1;
-				} else {
-					Sno = DataTableLength + 1;
-				}
-				var obj = {
-					Sno: Sno,
-					Bukrs: CompanyCode,
-					Anlkl: AssetClass,
-					Werks: Plant,
-					Stort: "",
-					Kostl: CostCenter,
-					Anln1: Asset,
-					Anln2: SubAsset,
-					Txt50: Name,
-					Aktiv: "",
-					Lifnr: "",
-					Invnr: "",
-					Prctr: "",
-					Meins: Unit,
-					Menge: Quantity,
-					Posid: WBSNo
-				};
-				DataTable.push(obj);
-				var AssetModel = new JSONModel(DataTable);
-				AssetModel.iSizeLimit = 10000;
-				jQuery.sap.that.getView().byId("AssetListDataTable").setModel(AssetModel);
-				jQuery.sap.F4_AddNewAsset.close();
-			}
-		},
 		VendorClose: function() {
 			jQuery.sap.F4_PersonnelVendorSearch.close();
-		},
-		ClearVendorPress: function() {
-			Core.byId("VendorCompanyCode").setSelectedKey("");
-			Core.byId("VendorNoId").setValue("");
-			Core.byId("VendorNameId").setValue("");
-			Core.byId("VendorPersonnelNoId").setValue("");
-			Core.byId("VendorFirstNameId").setValue("");
-			Core.byId("VendorLastNameId").setValue("");
-			var emptyJson = new JSONModel([]);
-			emptyJson.iSizeLimit = 10000;
-			Core.byId("VendorTableId").setModel(emptyJson);
-			Core.byId("VendorTabelPanelId").setVisible(false);
-			var TitleText = Core.byId("VendorTitleId").getText().indexOf("Vendor");
-			var Title = "";
-			if(TitleText != -1) {
-				Title = jQuery.sap.i18n.getText("SearchVendorTitle");
-			} else {
-				Title = jQuery.sap.i18n.getText("SearchPersonnelInChargeTitle");
-			}
-			Core.byId("VendorTitleId").setText(Title);
-		},
-		GetVendorPress: function() {
-			var CompanyCode = Core.byId("VendorCompanyCode").getSelectedKey();
-			var VendorNo = Core.byId("VendorNoId").getValue();
-			var VendorName = Core.byId("VendorNameId").getValue();
-			var PersonnelNo = Core.byId("VendorPersonnelNoId").getValue();
-			var FirstName = Core.byId("VendorFirstNameId").getValue();
-			var LastName = Core.byId("VendorLastNameId").getValue();
-			var TitleText = Core.byId("VendorTitleId").getText().indexOf("Vendor");
-			if(CompanyCode == "" && TitleText != -1) {
-				var Msg = jQuery.sap.i18n.getText("CompanyCodeMandatoryTxt");
-				MessageBox.information(Msg);
-			} else {
-				jQuery.sap.DataLoadProgress.open();
-				Core.byId("VendorSearchPageId").setExpanded(false);
-				Core.byId("VendorTabelPanelId").setVisible(true);
-				var Obj = {};
-				var EntityInputs = [];
-				if(CompanyCode != "") {
-					var data = "Bukrs eq '".concat(CompanyCode).concat("'");
-					EntityInputs.push(data);
-					Obj.Bukrs = CompanyCode;
-				}
-				if(VendorNo != "") {
-					var data = "Lifnr eq '".concat(VendorNo).concat("'");
-					EntityInputs.push(data);
-					Obj.Lifnr = VendorNo;
-				}
-				if(VendorName) {
-					var data = "Mcod1 eq '".concat(VendorName).concat("'");
-					EntityInputs.push(data);
-					Obj.Mcod1 = VendorName;
-				}
-				if(PersonnelNo != "") {
-					var data = "Pernr eq '".concat(PersonnelNo).concat("'");
-					EntityInputs.push(data);
-					Obj.Pernr = PersonnelNo;
-				}
-				if(FirstName != "") {
-					var data = "Vnamc eq '".concat(FirstName).concat("'");
-					EntityInputs.push(data);
-					Obj.Vnamc = FirstName;
-				}
-				if(LastName) {
-					var data = "Nchmc eq '".concat(LastName).concat("'");
-					EntityInputs.push(data);
-					Obj.Nchmc = LastName;
-				}
-				var data = "Pkv eq '".concat("P").concat("'");
-				Obj.Pkv = "P";
-				if(TitleText != -1) {
-					var data = "Pkv eq '".concat("V").concat("'");
-					Obj.Pkv = "V";
-				}
-				EntityInputs.push(data);
-				var EntityValue = "SearchPKVDISet?$expand=EtPkvSearch";
-				if(EntityInputs.length > 0) {
-					EntityInputs = EntityInputs.toString();
-					EntityInputs = EntityInputs.split(',').join(' and ');
-					EntityInputs = encodeURIComponent(EntityInputs);
-					EntityValue = "SearchPKVDISet?$filter=" + EntityInputs + "&$expand=EtPkvSearch";
-				}
-				jQuery.sap.that.checkConnection();
-				if(jQuery.sap.B_isonLine == false) {
-					MessageBox.warning(jQuery.sap.i18n.getText("msgoffline"));
-					return false;
-				}
-				setTimeout(function() {
-					var getData = new sap.ui.model.odata.ODataModel(jQuery.sap.Service_URL.getServiceUrl("ZEMT_AMAPP_SRV/"), true);
-					getData.setHeaders(Obj);
-					getData.read(EntityValue, null, null, false, function(oData, response) {
-						var TitleText = Core.byId("VendorTitleId").getText().indexOf("Vendor");
-						var DataJson = new JSONModel([]);
-						DataJson.iSizeLimit = 10000;
-						var Title = "";
-						if(TitleText != -1) {
-							Title = jQuery.sap.i18n.getText("SearchVendorTitle");
-						} else {
-							Title = jQuery.sap.i18n.getText("SearchPersonnelInChargeTitle");
-						}
-						if(oData.results.length == 0) {
-							var Msg = jQuery.sap.i18n.getText("NoDataMsg");
-							MessageBox.information(Msg);
-							Core.byId("VendorTableId").setModel(DataJson);
-							Core.byId("VendorTitleId").setText(Title);
-						} else {
-							DataJson.setData(oData.results[0].EtPkvSearch.results);
-							Core.byId("VendorTableId").setModel(DataJson);
-							Core.byId("VendorTitleId").setText(Title + " (" + oData.results[0].EtPkvSearch.results.length + ")");
-						}
-						jQuery.sap.DataLoadProgress.close();
-					}, function(oError) {
-						jQuery.sap.DataLoadProgress.close();
-						console.log("Error in Search SearchPKVSet");
-						var errMessage = oError.response.statusText;
-						var MessageText = JSON.parse(oError.response.body).error.message.value;
-						MessageBox.error(errMessage + "  (" + MessageText + ")");
-					});
-				}, 2000);
-			}
-		},
-		Addvendor: function(oEvent) {
-			var TitleText = Core.byId("VendorTitleId").getText().indexOf("Vendor");
-			var VendorTable = Core.byId("VendorTableId");
-			var SelectedContext = VendorTable.getSelectedIndices();
-			var SelectedContextLength = SelectedContext.length;
-			if(SelectedContextLength == 0) {
-				var Msg = jQuery.sap.i18n.getText("selectRecord");
-				MessageBox.information(Msg);
-			} else {
-				var VendorTableData = VendorTable.getContextByIndex(VendorTable.getSelectedIndices()[0]).getObject();
-				if(TitleText != -1) {} else {}
-				jQuery.sap.F4_PersonnelVendorSearch.close();
-			}
 		},
 		WBSNoValueHelp: function(oEvent) {
 			var id = oEvent.getSource().getId();
@@ -1005,41 +750,6 @@ sap.ui.define(["ZEMT_AM_PIP_APP/controller/BaseController", "ZEMT_AM_PIP_APP/For
 					jQuery.sap.F4_WbsNoSearch.close();
 			}
 		},
-		ExcelTemplatePress: function() {
-			var content = jQuery.sap.FAPFormExcelTemplate;
-			var file_path = 'data:application/octet-stream;base64,' + content;
-			var a = document.createElement('A');
-			a.href = file_path;
-			a.download = "FAP Form Excel Template.xlsx";
-			document.body.appendChild(a);
-			a.click();
-			a.emphasized = true;
-			document.body.removeChild(a);
-		},
-		AssetTitlePress: function(oEvent) {
-			var AssetName = jQuery.sap.i18n.getText("AssetName");
-			var oButton = oEvent.getSource();
-			Core.byId("Poptext").setText(AssetName);
-			jQuery.sap.delayedCall(0, this, function() {
-				jQuery.sap.F4_ResponsivePopover.openBy(oButton);
-			});
-		},
-		AssetNamePress: function(oEvent) {
-			var AdditionalAssetName = jQuery.sap.i18n.getText("AdditionalAssetName");
-			Core.byId("Poptext").setText(AdditionalAssetName);
-			var oButton = oEvent.getSource();
-			jQuery.sap.delayedCall(0, this, function() {
-				jQuery.sap.F4_ResponsivePopover.openBy(oButton);
-			});
-		},
-		AssetTypePress: function(oEvent) {
-			var AssetTypeHelp = jQuery.sap.i18n.getText("AssetTypeHelp");
-			Core.byId("Poptext").setText(AssetTypeHelp);
-			var oButton = oEvent.getSource();
-			jQuery.sap.delayedCall(0, this, function() {
-				jQuery.sap.F4_ResponsivePopover.openBy(oButton);
-			});
-		},
 		UpdateRequest_Close: function() {
 			jQuery.sap.F4_Update_Request.close();
 		},
@@ -1062,175 +772,6 @@ sap.ui.define(["ZEMT_AM_PIP_APP/controller/BaseController", "ZEMT_AM_PIP_APP/For
 			this.getView().byId("HiddenDP").setValue(new Date());
 			this.getView().byId("HiddenDP").openBy(oEvent.getSource().getDomRef());
 		},
-		Edit_Record : function(oEvent){
-			var Selcted_Record = oEvent.getSource().getBindingContext().getObject();
-			Core.byId("btnAdd_F4").setVisible(false);
-			Core.byId("btnUpdate_F4").setVisible(true);
-			jQuery.sap.F4_Update_Request.open();
-			jQuery.sap.F4_Update_Request._$dialog.animate({top:"+10", left: "5%"}, 1000, "swing");
-			Core.byId("ReportingDate_f4").setValue(jQuery.sap.DateFormat_ddMMMyyyy.format(new Date()));
-		},
-		// Edit Proj Comp Table Data
-		EditItem: function() {
-			var ProjComp_Model = this.getView().byId("Proj_comp_table");
-			var SelectedContext = ProjComp_Model.getSelectedIndices();
-			var SelectedContextLength = SelectedContext.length;
-			if(SelectedContextLength === 0) {
-				MessageBox.warning(jQuery.sap.i18n.getText("SelectRecord"));
-				return false;
-			} else if(SelectedContextLength > 1) {
-				MessageBox.warning(jQuery.sap.i18n.getText("selectRecordOnlyOne"));
-				return false;
-			} else {
-				var Selected_index = this.getView().byId("Proj_comp_table").getSelectedIndex();
-				jQuery.sap.F4_Update_Request.open();
-				var F4_view = Core;
-				var obj = this.ProjComp_arr[Selected_index];
-				F4_view.byId("btnAdd_F4").setVisible(false);
-				F4_view.byId("btnUpdate_F4").setVisible(true);
-				F4_view.byId("CompanyCode_id").setSelectedKey(obj.Bukrs);
-				F4_view.byId("reference_id").setValue(obj.Xblnr);
-				F4_view.byId("ValueDate_id").setValue(obj.Bzdat);
-				F4_view.byId("WBSNo_id").setValue(obj.Posid);
-				F4_view.byId("wbsname_id").setValue(obj.Post1);
-				F4_view.byId("AssetNo_id").setValue(obj.Anln1);
-				F4_view.byId("SubAssetNo_id").setValue(obj.Anln2);
-				F4_view.byId("Amount_id").setValue(obj.Anbtr);
-				F4_view.byId("PercentCostAllocation_id").setValue(obj.Prozs);
-				F4_view.byId("Validto_yearid").setValue(obj.Gbisj);
-			    F4_view.byId("Validfrom_yearid").setValue(obj.Gabja);
-				F4_view.byId("Validfrom_periodid").setValue(obj.Gabpe);
-				F4_view.byId("Validto_periodid").setValue(obj.Gbisp);
-			}
-		},
-		beforeOpen : function(){
-			jQuery.sap.F4_Priority._dialog._$dialog.animate({top:"+10", left: "20%"}, 2000, "swing");
-		},
-		createColumnConfig: function() {
-			var aCols = [];
-			aCols.push({
-				label: 'Company Code',
-				property: 'Bukrs',
-				type: EdmType.String,
-				width: 14
-			});
-			aCols.push({
-				label: 'Reference',
-				property: 'Xblnr',
-				type: EdmType.String,
-				width: 14
-			});
-			aCols.push({
-				label: 'Value Date',
-				property: 'Bzdat',
-				type: EdmType.String,
-				width: 14
-			});
-			aCols.push({
-				label: 'WBS No',
-				property: 'Posid',
-				type: EdmType.String,
-				width: 14
-			});
-			aCols.push({
-				label: 'WBS Name',
-				property: 'Post1',
-				type: EdmType.String,
-				width: 14
-			});
-			aCols.push({
-				label: 'Asset No',
-				property: 'Anln1',
-				type: EdmType.String,
-				width: 14
-			});
-			aCols.push({
-				label: 'Sub Asset No',
-				property: 'Anln2',
-				type: EdmType.String,
-				width: 14
-			});
-			aCols.push({
-				label: 'Amount',
-				property: 'Anbtr',
-				type: EdmType.String,
-				width: 14
-			});
-			aCols.push({
-				label: '% Cost Allocation',
-				property: 'Prozs',
-				type: EdmType.String,
-				width: 14
-			});
-			return aCols;
-		},
-		onExport : function(){
-			var oTable = jQuery.sap.that.getView().byId("Proj_comp_table").getBinding("rows");
-			if(oTable == undefined){
-				jQuery.sap.that.getView().byId("FixedAssetIconTabId").setSelectedKey("Proj Comp");
-				MessageBox.warning(jQuery.sap.i18n.getText("NodatatoDownload"));
-				return false;
-			}else if(oTable.iLength == 0){
-				jQuery.sap.that.getView().byId("FixedAssetIconTabId").setSelectedKey("Proj Comp");
-				MessageBox.warning(jQuery.sap.i18n.getText("NodatatoDownload"));
-				return false;
-			}
-		var that = this;
-		var dialog = new Dialog("buttonid", {
-			type: "Message",
-			title: "File nmae",
-			content: new sap.m.Input("input_id", {
-				value: "",
-				width: "100%"
-			}),
-			beginButton: new sap.m.Button({
-				text: 'Ok',
-				press: function() {
-					var filename = sap.ui.getCore().byId("input_id").getValue();
-					if(filename == "") {
-						MessageBox.warning(jQuery.sap.i18n.getText("EnterFilename"));
-						return false;
-					} else {
-						that.onExport1();
-						dialog.close();
-					}
-				}
-			}),
-			endButton: new sap.m.Button({
-				text: 'Cancel',
-				press: function() {
-					dialog.close();
-				}
-			}),
-			afterClose: function() {
-				dialog.destroy();
-			}
-		});
-		dialog.open();
-	},
-		onExport1: function() {
-			var aCols, mDataSource, mSettings, oSpreadsheet, oTable;
-			oTable = jQuery.sap.that.getView().byId("Proj_comp_table");
-			mDataSource = oTable.getBinding("rows");
-			aCols = this.createColumnConfig();
-			var mSettings = {
-				workbook: {
-					columns: aCols,
-					
-				},
-				dataSource: mDataSource,
-				fileName: 	`${sap.ui.getCore().byId("input_id").getValue()}.xlsx`,
-				worker: false
-			};
-			oSpreadsheet = new sap.ui.export.Spreadsheet(mSettings);
-			oSpreadsheet.build().then(function() {
-				sap.m.MessageToast.show("Export is finished");
-			}).finally(function() {
-				oSpreadsheet.destroy();
-			}).catch(function(sMessage) {
-				sap.m.MessageToast.show("Export error: " + sMessage)
-			})
-		},
 		Numeric_livechange  :function(oEvent) {
 			var id = oEvent.oSource.sId.split("--")[1];
 			var inputvalue = Core.byId(id).getValue();
@@ -1241,17 +782,161 @@ sap.ui.define(["ZEMT_AM_PIP_APP/controller/BaseController", "ZEMT_AM_PIP_APP/For
 				this.getView().byId(id).setDOMValue(value.substring(0, 3));
 			}
 		},
-		suggest : function(oEvent){
-			
-		},
-		OpenCostCenter_F4 : function(oEvent){
-			
-		},
 		Close_Update_Request_Search : function(){
 			jQuery.sap.PIP_Report_Search.close();
 		},
 		Search_Records : function(){
 			jQuery.sap.PIP_Report_Search.open();
+		},
+		createColumnConfig: function() {
+			var aCols = [];
+			aCols.push({
+				label: 'Project No',
+				property: 'Pspid',
+				type: EdmType.String,
+				width: 8
+			});
+			aCols.push({
+				label: 'PIP Asset No',
+				property: 'Anln1',
+				type: EdmType.String,
+				width: 8
+			});
+			aCols.push({
+				label: 'PIP Asset Name',
+				property: 'Txt50',
+				type: EdmType.String,
+				width: 7
+			});
+			aCols.push({
+				label: 'Sub Asset No',
+				property: 'Anln2',
+				type: EdmType.String,
+				width: 7
+			});
+			aCols.push({
+				label: 'WBS No',
+				property: 'Posid',
+				type: EdmType.String,
+				width: 8
+			});
+			aCols.push({
+				label: 'WBS Name',
+				property: 'Wbsnmae',
+				type: EdmType.String,
+				width: 11
+			});
+			aCols.push({
+				label: 'Project Cost',
+				property: 'Prjcost',
+				type: EdmType.String,
+				width: 8
+			});
+			aCols.push({
+				label: 'Approved Revised Project Cost',
+				property: 'Rprjcost',
+				type: EdmType.String,
+				width: 15
+			});
+			aCols.push({
+				label: 'Approved Budget for FY',
+				property: 'Wert1',
+				type: EdmType.String,
+				width: 14
+			});
+			aCols.push({
+				label: 'PIP Balance',
+				property: 'Answt',
+				type: EdmType.String,
+				width: 7
+			});
+			aCols.push({
+				label: 'YEP',
+				property: 'Yepcost',
+				type: EdmType.String,
+				width: 10
+			});
+			aCols.push({
+				label: 'Reporting Date',
+				property: 'Repdate',
+				type: EdmType.String,
+				width: 10
+			});
+			aCols.push({
+				label: 'Completion Date',
+				property: 'Compd',
+				type: EdmType.String,
+				width: 10
+			});
+			aCols.push({
+				label: 'Revised Completion Date',
+				property: 'Rcompd',
+				type: EdmType.String,
+				width: 14
+			});
+			aCols.push({
+				label: '% of Completion',
+				property: 'Prozs',
+				type: EdmType.String,
+				width: 9
+			});
+			aCols.push({
+				label: 'Status',
+				property: 'Pstatus',
+				type: EdmType.String,
+				width: 7
+			});
+			aCols.push({
+				label: 'Ageing',
+				property: 'Dageing',
+				type: EdmType.String,
+				width: 8
+			});
+			aCols.push({
+				label: 'Plant Code',
+				property: 'Werks',
+				type: EdmType.String,
+				width: 7
+			});
+			aCols.push({
+				label: 'Request Id',
+				property: 'Atrnid',
+				type: EdmType.String,
+				width: 8
+			});
+			aCols.push({
+				label: 'Financial Year',
+				property: 'Fyear',
+				type: EdmType.String,
+				width: 8
+			});
+			return aCols;
+		},
+		onExport: function() {
+			var aCols, mDataSource, mSettings, oSpreadsheet, oTable;
+			oTable = this.getView().byId("Pip_Ageing_Report_Table");
+			mDataSource = oTable.getBinding("rows");
+			if(mDataSource == undefined) {
+				this.getView().byId("Pip_Ageing_Report_Table").setModel(this.Empty_Model);
+				mDataSource = oTable.getBinding("rows");
+			}
+			aCols = this.createColumnConfig();
+			var mSettings = {
+				workbook: {
+					columns: aCols,
+				},
+				dataSource: mDataSource,
+				fileName: "SAP_EAM_PIP_Report_Data.xlxs", //`${sap.ui.getCore().byId("input_id").getValue()}.xlsx`,
+				worker: false
+			};
+			oSpreadsheet = new sap.ui.export.Spreadsheet(mSettings);
+			oSpreadsheet.build().then(function() {
+				sap.m.MessageToast.show("Export is finished");
+			}).finally(function() {
+				oSpreadsheet.destroy();
+			}).catch(function(sMessage) {
+				sap.m.MessageToast.show("Export error: " + sMessage)
+			})
 		},
 	});
 });

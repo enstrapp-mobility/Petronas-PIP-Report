@@ -12,23 +12,28 @@
 						<ToolbarSpacer />
 						<Button icon="sap-icon://decline" text="{i18n>btn_Exit}"
 							press="ExitAction" class="buttonClass" type="Reject"></Button>
-						<Button icon="sap-icon://save" text="{i18n>btn_Save}" visible = "false"
-							id="Save_btn" press="on_Save" class="buttonClass" type="Accept"></Button>
+						<Button icon="sap-icon://save" text="{i18n>btn_Save}"
+							visible="false" id="Save_btn" press="on_Save" class="buttonClass"
+							type="Accept"></Button>
 					</OverflowToolbar>
 				</content>
-				<ta:Table id="Pip_Ageing_Report_Table"
-					selectionMode="None" rows="{/}" filter="filterPrice"
-					sort="sortDeliveryDate" ariaLabelledBy="title">
+				<ta:Table id="Pip_Ageing_Report_Table" selectionMode="None"
+					rows="{/}" filter="filterPrice" sort="sortDeliveryDate"
+					ariaLabelledBy="title">
 					<ta:extension>
 						<OverflowToolbar>
+							<Button icon="sap-icon://download"
+								tooltip="{i18n>ExcelDownload}" text="{i18n>ExcelDownload}"
+								press="onExport" class="buttonClass" type="Transparent"></Button>
 							<ToolbarSpacer />
 							<Button icon="sap-icon://multi-select" text="Layout"
 								visible="false" press="AssetRequestsColumnsPopoverPress"
 								tooltip="Layout" type="Transparent" class="TransparentBtn" />
 
 							<Button icon="sap-icon://refresh" press="ReferehData"
-								text="{i18n>btn_Refresh}" tooltip="{i18n>btn_Refresh}"
-								type="Transparent" class="TransparentBtn" />
+								visible="false" text="{i18n>btn_Refresh}"
+								tooltip="{i18n>btn_Refresh}" type="Transparent"
+								class="TransparentBtn" />
 
 							<Button icon="sap-icon://search" text="{i18n>btn_Search}"
 								press="Search_Records" tooltip="Search" type="Transparent"
@@ -39,114 +44,158 @@
 						</OverflowToolbar>
 					</ta:extension>
 					<ta:columns>
-				<ta:Column width="8rem">
+						<ta:Column width="8rem" filterProperty="Pspid"
+							sortProperty="Pspid">
 							<Label text="{i18n>Project}" design="Bold" />
 							<ta:template>
-								<Text text="{Pspid}"/>
+								<Text text="{Pspid}" />
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="7rem">
+						<ta:Column width="7rem" filterProperty="Anln1"
+							sortProperty="Anln1">
 							<Label text="{i18n>PIPAssetNumber}" design="Bold" />
 							<ta:template>
 								<Text text="{Anln1}" />
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="10rem">
+						<ta:Column width="10rem" filterProperty="Txt50"
+							sortProperty="Txt50">
 							<Label text="{i18n>PIPAssetName}" design="Bold" />
 							<ta:template>
 								<Text text="{Txt50}" />
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="7rem">
+						<ta:Column width="7rem" filterProperty="Anln2"
+							sortProperty="Anln2">
 							<Label text="{i18n>SubAsset}" design="Bold" />
 							<ta:template>
 								<Text text="{Anln2}" />
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="8rem">
+						<ta:Column width="8rem" filterProperty="Posid"
+							sortProperty="Posid">
 							<Label text="{i18n>WbsNo}" design="Bold" />
 							<ta:template>
 								<Text text="{Posid}" />
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="8rem">
+						<ta:Column width="11rem" filterProperty="Wbsname"
+							sortProperty="Wbsname">
 							<Label text="{i18n>WbsName}" design="Bold" />
 							<ta:template>
-								<Text text="{Post1}" />
+								<Text text="{Wbsname}" />
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="8rem">
+						<ta:Column width="8rem" filterProperty="Prjcost"
+							sortProperty="Prjcost">
 							<Label text="{i18n>ProjectCost}" design="Bold" />
 							<ta:template>
-								<Text text="{Prjcost}" />
+								<Text
+									text="{ path: 'Prjcost', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatAmount'}"></Text>
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="15rem">
+						<ta:Column width="15rem" filterProperty="Rprjcost"
+							sortProperty="Rprjcost">
 							<Label text="{i18n>ApprovedRevisedProjectCost}"
 								design="Bold" />
 							<ta:template>
-								<Text text="{Rprjcost}" />
+								<Text
+									text="{ path: 'Rprjcost', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatAmount'}"></Text>
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="14rem" filterProperty="Bukrs"
-							sortProperty="Bukrs">
+						<ta:Column width="14rem" filterProperty="Wert1"
+							sortProperty="Wert1">
 							<Label text="{i18n>ApprovedBudgetforFY}" design="Bold" />
 							<ta:template>
-							<Text text="{Wert1}" />
+								<Text
+									text="{ path: 'Wert1', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatAmount'}"></Text>
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="7rem">
+						<ta:Column width="7rem" filterProperty="Answt"
+							sortProperty="Answt">
 							<Label text="{i18n>PIPBalance}" design="Bold" />
 							<ta:template>
-								<Text text="{Answt}" />
+								<Text
+									text="{ path: 'Answt', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatAmount'}"></Text>
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="10rem">
+						<ta:Column width="10rem" filterProperty="Yepcost"
+							sortProperty="Yepcost">
 							<Label text="{i18n>YEP}" design="Bold" />
 							<ta:template>
-							<Text text="{Yepcost}" />
+								<Text
+									text="{ path: 'Yepcost', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatAmount'}"></Text>
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="10rem">
-							<Label text="{i18n>ReportingDate}"
-								design="Bold" />
+						<ta:Column width="10rem" filterProperty="Repdate"
+							sortProperty="Repdate">
+							<Label text="{i18n>ReportingDate}" design="Bold" />
 							<ta:template>
-								<Text text="{path: 'Repdate', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatddmmyyy'}"/>
+								<Text
+									text="{path: 'Repdate', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatddmmyyy'}" />
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="10rem">
+						<ta:Column width="10rem" filterProperty="Compd"
+							sortProperty="Compd">
 							<Label text="{i18n>CompletionDate}" design="Bold" />
 							<ta:template>
-							<Text text="{path: 'Compd', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatddmmyyy'}"/>
+								<Text
+									text="{path: 'Compd', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatddmmyyy'}" />
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="14rem">
+						<ta:Column width="14rem" filterProperty="Rcompd"
+							sortProperty="Rcompd">
 							<Label text="{i18n>RevisedCompletionDate}" design="Bold" />
 							<ta:template>
-							<Text text=" {path: 'Rcompd', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatddmmyyy'}"/>
+								<Text
+									text=" {path: 'Rcompd', formatter: 'ZEMT_AM_PIP_APP.Format.Formatter.formatddmmyyy'}" />
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="9rem">
+						<ta:Column width="9rem" filterProperty="Prozs"
+							sortProperty="Prozs">
 							<Label text="{i18n>PercentageofCompletion(%)}"
 								design="Bold" />
 							<ta:template>
-							<Text text="{Prozs}" />
+								<Text text="{Prozs}" />
 							</ta:template>
 						</ta:Column>
-						<ta:Column width="7rem" filterProperty="Werk"
-							sortProperty="Werk">
+						<ta:Column width="7rem" filterProperty="Pstatus"
+							sortProperty="Pstatus">
 							<Label text="{i18n>Status}" design="Bold" />
 							<ta:template>
 								<Text text="{Pstatus}" />
 							</ta:template>
 						</ta:Column>
 
-						<ta:Column width="8rem">
+						<ta:Column width="8rem" filterProperty="Dageing"
+							sortProperty="Dageing">
 							<Label text="{i18n>Ageing}" design="Bold" />
 							<ta:template>
 								<Text text="{Dageing}" />
 							</ta:template>
 						</ta:Column>
+						<ta:Column width="7rem">
+							<Label text="{i18n>Planningplant}" design="Bold" />
+							<ta:template>
+								<Text text="{Werks}" />
+							</ta:template>
+						</ta:Column>
+						<ta:Column width="8rem" filterProperty="Atrnid"
+							sortProperty="Atrnid">
+							<Label text="{i18n>RequestId}" design="Bold" />
+							<ta:template>
+								<Text text="{Atrnid}" />
+							</ta:template>
+						</ta:Column>
+
+						<ta:Column width="10rem" filterProperty="Fyear"
+							sortProperty="Fyear">
+							<Label text="{i18n>FinancialYear}" design="Bold" />
+							<ta:template>
+								<Text text="{Fyear}" />
+							</ta:template>
+						</ta:Column>
+
 					</ta:columns>
 				</ta:Table>
 				<DatePicker id="HiddenDP" hideInput="true"

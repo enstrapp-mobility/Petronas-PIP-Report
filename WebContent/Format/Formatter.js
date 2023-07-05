@@ -70,6 +70,7 @@ sap.ui.define(function() {
 				return "./images/"+ingValue;
 			}
 		},
+		
 		Required : function(value){
 			if (value == "X") {
 				return true;
@@ -105,7 +106,11 @@ sap.ui.define(function() {
 				}
 			}
 		return Data;
-		}
+		},// (12345.67).toFixed(2)
+		formatAmount : function(Amount){
+			Amount != null && Amount != "" ? Amount = (+Amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') : Amount = "";
+			return Amount;
+		},
 	};
 	return Formatter;
 }, true);

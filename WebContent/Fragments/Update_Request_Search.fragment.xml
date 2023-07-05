@@ -17,24 +17,24 @@
 					columnsM="1" columnsL="1" columnsXL="1">
 					<f:content>
 						<core:Title text="" />
-						<Label text="{i18n>CompanyCode}" id="CompanyCodeLabel"
-							required="true" class="sapMLabelNoText" />
-						<ComboBox id="CompanyCode" change="CompanyCode_Change"
-							items="{/}">
+						<Label text="{i18n>CompanyCode}" required="true"
+							class="sapMLabelNoText" />
+						<ComboBox id="CompanyCode" items="{/}">
 							<core:Item key="{Bukrs}" text="{Bukrs} - {Butxt}" />
 						</ComboBox>
+
 						<Label text="{i18n>Planningplant}" required="false"
 							class="sapMLabelNoText" />
-						<ComboBox id="Planningplant" items="{/}"
+						<ComboBox id="Plant" items="{/}"
 							change="PlantChange">
 							<core:Item key="{Werks}" text="{Werks} - {City}" />
 						</ComboBox>
 						<Label text="{i18n>ProjectNo}" class="sapMLabelNoText"
 							required="false" />
-						<Input id="ProjNoId" maxLength="8" showValueHelp="true"
+						<Input id="ProjNoId" maxLength="18" showValueHelp="true"
 							valueHelpRequest="WBSNoValueHelp"></Input>
 						<Label text="{i18n>WBSNo}" class="sapMLabelNoText" />
-						<Input id="WBSNoId" maxLength="8" showValueHelp="true"
+						<Input id="WBSNoId" maxLength="18" showValueHelp="true"
 							valueHelpRequest="WBSNoValueHelp" />
 						<Label text="{i18n>PIPAssetNumber}" class="sapMLabelNoText" />
 						<Input id="Asset_id" enabled="true" maxLength="12"
