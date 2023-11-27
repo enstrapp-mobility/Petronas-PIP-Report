@@ -1,0 +1,74 @@
+<core:FragmentDefinition
+	xmlns:core='sap.ui.core' xmlns:sap.ui.layout.form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:f="sap.ui.layout.form"
+	xmlns:l="sap.ui.layout" xmlns:u="sap.ui.unified">
+	<Dialog contentHeight="100%" contentWidth="100%" showHeader="false">
+	
+	<OverflowToolbar class="FragmentToolBar">
+		<ToolbarSpacer />
+		<Label text="{i18n>AssetCenterSearch}" id="AssetCenterSearchId" class="headerText"></Label>
+		<ToolbarSpacer />
+		<Button icon="sap-icon://decline" tooltip="Close"
+		class="btnMaterialSearchClose" press="SearchClose"
+		type="Reject"></Button>
+	</OverflowToolbar>
+		<f:SimpleForm id="MasterData"
+			editable="true" layout="ResponsiveGridLayout" labelSpanXL="4"
+			labelSpanL="3" labelSpanM="4" labelSpanS="12" adjustLabelSpan="false"
+			emptySpanXL="0" emptySpanL="4" emptySpanM="0" emptySpanS="0"
+			columnsXL="2" columnsL="1" columnsM="1"
+			singleContainerFullSize="false">
+			<f:content>
+			<core:Title text="" class="remove-space" />
+			<Label text="{i18n>AssetClass}" class="sapMLabelNoText" />
+				<ComboBox id="AssetClassId" items="{/}">
+					<core:Item key="{Anlkl}" text="{Anlkl} - {Txk50}" />
+					<layoutData>
+					<l:GridData span="XL1 L2 M2 S4" />
+				</layoutData>
+				</ComboBox>
+				<ComboBox id="AssetClass1Id" items="{/}">
+					<core:Item key="{Anlkl}" text="{Anlkl} - {Txk50}" />
+				</ComboBox>
+				<Label text="{i18n>PlaningPlant}" class="sapMLabelNoText" />
+				<ComboBox id="PlaningPlantId" items="{/}">
+					<core:Item key="{Werks}" text="{Werks} - {City}" />
+					<layoutData>
+					<l:GridData span="XL1 L2 M2 S4" />
+				</layoutData>
+				</ComboBox>
+				<ComboBox id="PlaningPlant1Id" items="{/}">
+				<core:Item key="{Werks}" text="{Werks} - {City}" />
+				</ComboBox>
+				<Label text="{i18n>FunctionalLocation}" class="sapMLabelNoText" />
+				<!-- <ComboBox id="FunctionalLocationId" items="{/}">
+					<core:Item key="{Muser}" text="{Muser} - {Fname} - {Lname}" />
+				</ComboBox> -->
+				<Input id="FunctionalLocationId"></Input>
+				<Label text="{i18n>EquipmentCategory}" class="sapMLabelNoText" />
+				<ComboBox id="EquipmentCategoryId" items="{/}">
+					<core:Item key="{Eqtyp}" text="{Eqtyp} - {Typtx}" />
+				</ComboBox>
+				<Label text="{i18n>TechnicalObjType}" class="sapMLabelNoText" />
+				<ComboBox id="TechnicalObjTypeId" items="{/}">
+					<core:Item key="{Eqart}" text="{Eqart} - {Eartx}" />
+				</ComboBox>
+				<!-- <Label text="{i18n>AssetStatus}" />
+				<ComboBox id="AssetStatusId" items="{/}">
+					<core:Item key="{Status}" text="{Status} - {Name}" />
+					<layoutData>
+					<l:GridData span="XL1 L2 M2 S4" />
+				</layoutData>
+				</ComboBox>
+				<ComboBox id="AssetStatus1Id" items="{/}">
+					<core:Item key="{Status}" text="{Status} - {Name}" />
+				</ComboBox> -->
+			</f:content>
+		</f:SimpleForm>
+		<endButton>
+			<Button text="{i18n>btn_Search}" icon="sap-icon://search"
+				type="Accept" press="SearchGetData" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

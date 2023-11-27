@@ -1,0 +1,125 @@
+<core:FragmentDefinition
+	xmlns:core='sap.ui.core' xmlns:sap.ui.layout.form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:f="sap.ui.layout.form"
+	xmlns:l="sap.ui.layout" xmlns:u="sap.ui.unified">
+	<Dialog contentHeight="100%" contentWidth="100%"
+		beforeOpen="Clear_Proj_Data" showHeader="false">
+		<OverflowToolbar class="FragmentToolBar">
+			<ToolbarSpacer />
+			<Label text="{i18n>AddProj_comp}" class="headerText"></Label>
+			<ToolbarSpacer />
+			<Button icon="sap-icon://decline" tooltip="Close"
+				class="btnMaterialSearchClose" press="Close_Proj_Comp" type="Reject"></Button>
+		</OverflowToolbar>
+		<f:SimpleForm editable="true"
+			layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="3"
+			labelSpanM="4" labelSpanS="12" adjustLabelSpan="false"
+			emptySpanXL="0" emptySpanL="4" emptySpanM="0" emptySpanS="0"
+			columnsXL="2" columnsL="2" columnsM="2"
+			singleContainerFullSize="false">
+			<f:content>
+				<core:Title text="" class="remove-space" />
+				<Label text="{i18n>CompanyCode}" required="true"
+					class="sapMLabelNoText" />
+				<ComboBox id="Proj_CompanyCode_id" items="{/}"
+					change="Proj_ComapnyCodeChange">
+					<core:Item key="{Bukrs}" text="{Bukrs} - {Butxt}" />
+				</ComboBox>
+				<Label text="{i18n>CostCenter}" required="false"
+					class="sapMLabelNoText" />
+				<Input id="Proj_CostCenter" visible="true" showValueHelp="true" valueHelpOnly="true" valueHelpIconSrc="sap-icon://slim-arrow-down"  editable="false"
+										showSuggestion="true" suggestionItems = "{/}" valueHelpRequest="onCostCenter_ValueHelpRequest"  >
+										<suggestionItems>
+											<core:ListItem text="{Kostl} - {Ktext}" key = "{Kostl}"/>
+										</suggestionItems>
+									</Input>
+				<Label text="{i18n>AsserClass}" required="false"
+					class="sapMLabelNoText" />
+				<ComboBox id="Proj_AssetClass" items="{/}" editable="false">
+					<core:Item key="{Anlkl}" text="{Anlkl} - {Txk50}" />
+				</ComboBox>
+				<Label text="{i18n>AssetName}" class="sapMLabelNoText" />
+				<Input id="Proj_AssetName" maxLength="20"></Input>
+
+				<Label text="{i18n>Reference}" class="sapMLabelNoText" />
+				<Input id="reference_id" maxLength="16"></Input>
+
+
+				<Label text="{i18n>ValueDate}" required="false"
+					class="sapMLabelNoText" />
+				<Input id="ValueDate_id" valueHelpRequest="openDatePicker"
+					valueHelpIconSrc="sap-icon://appointment-2" valueHelpOnly="true"
+					showValueHelp="true" placeholder="dd-MMM-yyyy"></Input>
+				<Label text="{i18n>ProjectNo}" required="true"
+					class="sapMLabelNoText" />
+				<Input id="ProjectNo_id" maxLength="24" visible="false"></Input>
+				<Label text="{i18n>WBSNo}" required="false"
+					class="sapMLabelNoText" />
+				<Input id="WBSNo_id" maxLength="8" showValueHelp="true"
+					valueHelpRequest="WBSNoValueHelp"></Input>
+				<Label text="{i18n>WbsName}" class="sapMLabelNoText" />
+				<Input id="wbsname_id" maxLength="16" showValueHelp="true"
+					valueHelpRequest="WBSNoValueHelp"></Input>
+
+				<Label text="{i18n>EvaluationGroup3}" class="sapMLabelNoText" />
+				<ComboBox id="EvaluationGroup3Id" items="{/}">
+					<core:Item key="{Ord4x}" text="{Ord4x} - {Ordtx}" />
+				</ComboBox>
+				<Label text="{i18n>EvaluationGroup4}" class="sapMLabelNoText" />
+				<ComboBox id="EvaluationGroup4Id" items="{/}"
+					required="false">
+					<core:Item key="{Ord4x}" text="{Ord4x} - {Ordtx}" />
+				</ComboBox>
+				<core:Title text="" class="remove-space" />
+				<Label text="{i18n>Asset#}" class="sapMLabelNoText"
+					required="false" />
+				<Input id="AssetNo_id" maxLength="12" showValueHelp="true"
+					valueHelpRequest="AssetValueHelp" />
+				<Label text="{i18n>SubAsset#}" required="false"
+					class="sapMLabelNoText" />
+				<Input id="SubAssetNo_id" maxLength="4" showValueHelp="true"
+					valueHelpRequest="AssetValueHelp" />
+				<Label text="{i18n>UsefulLife}" class="sapMLabelNoText" />
+				<Input id="Proj_Usefullife" maxLength="3"
+					liveChange="Numeric_Only_Livechange"></Input>
+
+				<Label text="{i18n>ODepStartDate}" required="false"
+					class="sapMLabelNoText" />
+				<Input id="proj_DepSdate" valueHelpRequest="openDatePicker"
+					valueHelpIconSrc="sap-icon://appointment-2" valueHelpOnly="true"
+					showValueHelp="true" placeholder="dd-MMM-yyyy"></Input>
+				<Label text="{i18n>Amount}" class="sapMLabelNoText"
+					required="true" />
+				<Input id="Amount_id" maxLength="10" type="Tel"
+					liveChange="Amount_livechange"></Input>
+				<Label text="{i18n>PercentCostAllocation}"
+					class="sapMLabelNoText" />
+				<Input id="PercentCostAllocation_id" type="Number"
+					maxLength="3" liveChange="CostAlloc_livechange" required="true"></Input>
+
+				<Label text="{i18n>Validfromyear}" class="sapMLabelNoText" />
+				<Input id="Validfrom_yearid" maxLength="4" visible="true"
+					liveChange="Numeric_livechange"></Input>
+				<Label text="{i18n>validtoyear}" class="sapMLabelNoText" />
+				<Input id="Validto_yearid" maxLength="4" visible="true"
+					liveChange="Numeric_livechange"></Input>
+				<Label text="{i18n>Validfromperiod}" class="sapMLabelNoText" />
+				<Input id="Validfrom_periodid" maxLength="3" visible="true"
+					liveChange="Numeric_livechange"></Input>
+				<Label text="{i18n>vallidtoperiod}" class="sapMLabelNoText" />
+				<Input id="Validto_periodid" maxLength="3" visible="true"
+					liveChange="Numeric_livechange"></Input>
+
+			</f:content>
+		</f:SimpleForm>
+		<beginButton>
+			<Button text="{i18n>btnUpdate}" icon="sap-icon://edit-outside"
+				id="btnUpdate_F4" type="Accept" press="Update_Proj_Data" />
+		</beginButton>
+		<endButton>
+			<Button text="{i18n>btnAdd}" icon="sap-icon://add"
+				id="btnAdd_F4" type="Accept" press="Add_Proj_Data" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

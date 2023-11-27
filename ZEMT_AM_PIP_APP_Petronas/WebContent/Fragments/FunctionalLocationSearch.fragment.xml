@@ -1,0 +1,84 @@
+<core:FragmentDefinition
+	xmlns:core='sap.ui.core' xmlns:sap.ui.layout.form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:f="sap.ui.layout.form"
+	xmlns:l="sap.ui.layout" xmlns:u="sap.ui.unified">
+	
+	<Dialog contentHeight="100%" contentWidth="100%" showHeader="false">
+	<OverflowToolbar class="homePageToolBar">
+		<ToolbarSpacer />
+		<Label text="{i18n>FunctionalLocationTitle}" id="FunctionalLocationTitleId" class="headerText"></Label>
+		<ToolbarSpacer />
+		<Button icon="sap-icon://decline" tooltip="Close"
+		class="btnMaterialSearchClose" press="FunctionalLocationClose"
+		type="Reject"></Button>
+	</OverflowToolbar>
+	<Panel headerText="{i18n>FunctionalLocationPage}" id="SearchFunctionalLocation" expandable="true" expanded="true">
+		<f:SimpleForm
+			editable="true" layout="ResponsiveGridLayout" labelSpanXL="4"
+			labelSpanL="3" labelSpanM="4" labelSpanS="12" adjustLabelSpan="false"
+			emptySpanXL="0" emptySpanL="4" emptySpanM="0" emptySpanS="0"
+			columnsXL="2" columnsL="1" columnsM="1"
+			singleContainerFullSize="false">
+			<f:content>
+			<core:Title text="" class="remove-space" />
+				<Label text="{i18n>FlCompanyCode}" class="sapMLabelNoText" />
+				<ComboBox id="FlCompanyCodeId" change="CompanyCodeChangeFL" items="{/}">
+					<core:Item key="{Bukrs}" text="{Bukrs} - {Butxt}" />
+				</ComboBox>
+				<Label text="{i18n>FlPlanningPlant}" class="sapMLabelNoText" />
+				<ComboBox id="FlPlanningPlantId" items="{/}">
+					<core:Item key="{Werks}" text="{Werks} - {City}" />
+				</ComboBox>
+				<core:Title text="" class="remove-space" />
+				<Label text="{i18n>FlCostCenter}" class="sapMLabelNoText" />
+				<ComboBox id="FlCostCenterId" items="{/}">
+					<core:Item key="{Kostl}" text="{Kostl} - {Ktext}" />
+				</ComboBox>
+				<Label text="{i18n>FlLocation}" class="sapMLabelNoText" />
+				<Input id="FlLocationId"  />
+			</f:content>
+		</f:SimpleForm>
+		<HBox justifyContent="Center" width="100%">
+		<Button text="{i18n>btnGetData}" press="getFunctionalLocationDataPress"  type="Emphasized" icon="sap-icon://detail-view"></Button>
+		</HBox>
+		</Panel>
+		<Panel id="TabelPanelId">
+		<Table id="FunctionalLocationTable" items="{/}" itemPress="pressFunctionalLocation" >
+								     <headerToolbar>
+				<Toolbar>
+					<SearchField id="FunctionalLocationSearchId" liveChange="FunctionalLocationSearch"  />
+				 </Toolbar>
+		</headerToolbar>
+									<columns>
+										<Column minScreenWidth="Phone" demandPopin="true">
+											<Label text="{i18n>TbFunctionalLoc}"  />
+										</Column>
+										<Column minScreenWidth="Tablet" demandPopin="true">
+											<Label text="{i18n>TbDescription}" />
+										</Column>
+										<Column minScreenWidth="Tablet" demandPopin="true">
+											<Label text="{i18n>TbPlanningPlant}"  />
+										</Column>
+										<Column minScreenWidth="Tablet" demandPopin="true">
+											<Label text="{i18n>TbWorkCenter}"  />
+										</Column>
+									</columns>
+									<items>
+										<ColumnListItem type="Navigation">
+											<cells>
+												<Text text="{Strno}"/>
+												<Text text="{Pltxt}"/>
+												<Text text="{Iwerk}"/>
+												<Text text="{Arbpl}"/>
+											</cells>
+										</ColumnListItem>
+									</items>
+								</Table>
+		</Panel>
+		<!-- <endButton>
+			<Button text="{i18n>btn_Search}" icon="sap-icon://search"
+				type="Accept" press="SearchFunctionalLocation" />
+		</endButton> -->
+	</Dialog>
+</core:FragmentDefinition>
