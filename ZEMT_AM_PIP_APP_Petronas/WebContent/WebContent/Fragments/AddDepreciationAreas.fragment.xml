@@ -1,0 +1,50 @@
+<core:FragmentDefinition xmlns:core='sap.ui.core'
+	xmlns:sap.ui.layout.form="sap.ui.layout.form" xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:f="sap.ui.layout.form"
+	xmlns:l="sap.ui.layout" xmlns:u="sap.ui.unified">
+	<Dialog contentHeight="100%" contentWidth="100%" showHeader="false">
+		<OverflowToolbar class="FragmentToolBar">
+			<ToolbarSpacer />
+			<Label text="{i18n>AddDepreciationAreasTitle}" class="headerText"></Label>
+			<ToolbarSpacer />
+			<Button icon="sap-icon://decline" tooltip="Close"
+				class="btnMaterialSearchClose" press="DepreciationAreasClose" type="Reject"></Button>
+		</OverflowToolbar>
+		<f:SimpleForm editable="true" layout="ResponsiveGridLayout"
+			labelSpanXL="4" labelSpanL="4" labelSpanM="4" labelSpanS="12"
+			adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="0"
+			emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1"
+			singleContainerFullSize="false">
+			<f:content>
+				<Label text="{i18n>Area}" required="true" class="sapMLabelNoText" />
+				<ComboBox id="AreaId" items="{/}" change="AreaChange">
+					<core:Item key="{Afaber}" text="{Afaber} - {Afbktx}" />
+				</ComboBox>
+				<Label text="{i18n>DepreciationAreas}" class="sapMLabelNoText" />
+				<Input id="DepreciationAreasId" editable="false"></Input>
+				<Label text="{i18n>DKey}" required="true" class="sapMLabelNoText" />
+				<ComboBox id="DKeyId" items="{/}">
+					<core:Item key="{Afasl}" text="{Afasl} - {Afatxt}" />
+				</ComboBox>
+				<Label text="{i18n>UsefulLife}" required="true" class="sapMLabelNoText" />
+				<Input id="UsefulLifeId" maxLength="3" />
+				<Label text="{i18n>ODepStartDate}" required="true" class="sapMLabelNoText" />
+				<DatePicker displayFormat="dd-MMM-yyyy" valueFormat="yyyy-MM-ddT00:00:00"
+					id="ODepStartDateId">
+				</DatePicker>
+			</f:content>
+		</f:SimpleForm>
+		<HBox justifyContent="Center" width="100%">
+				<Button text="{i18n>btnClear}" press="ClearDepreciationAreas" type="Reject"
+					icon="sap-icon://detail-view" class="sapUiSmallMarginEnd"></Button>
+				<Button text="{i18n>btnAdd}" press="AddDepreciationAreas" type="Accept"
+					icon="sap-icon://add"></Button>
+			</HBox>
+		<!-- <endButton>
+			<Button text="{i18n>btnClear}" press="ClearDepreciationAreas"
+				type="Reject" icon="sap-icon://detail-view" class="sapUiSmallMarginEnd"></Button>
+			<Button text="{i18n>btnAdd}" icon="sap-icon://add" type="Accept"
+				press="AddDepreciationAreas" />
+		</endButton> -->
+	</Dialog>
+</core:FragmentDefinition>

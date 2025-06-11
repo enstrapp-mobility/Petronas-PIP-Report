@@ -1,0 +1,22 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:u="sap.ui.unified" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core">
+    <Dialog contentHeight="80%" showHeader="false" type="Message" contentWidth="60%" class="modernDialog">
+        <Page>
+            <customHeader>
+                <Bar class="modernHeader">
+                    <contentMiddle>
+                        <Title id="ConformationTitleTxt" level="H4" class="modernTitle"/>
+                    </contentMiddle>
+                    <contentRight>
+                        <Button icon="sap-icon://decline" tooltip="{i18n>Close}" type="Transparent" class="modernCloseButton" press="onCancelPress"/>
+                    </contentRight>
+                </Bar>
+            </customHeader>
+            <content>
+                <ScrollContainer height="90%" vertical="true" class="modernScroll">
+                    <Text id="ConfirmationLongTextId" class="modernLongText"/>
+                </ScrollContainer>
+            </content>
+        </Page>
+    </Dialog>
+</core:FragmentDefinition>
