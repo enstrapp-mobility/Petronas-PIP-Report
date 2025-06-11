@@ -1,0 +1,18 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog id = "ProrityList"
+		noDataText="No Data"
+		title="{i18n>SelectPriority}"
+		search = "onSearch_Priority"
+		liveChange="onSearch_Priority"
+		confirm="onValueHelpDialogClose"
+		cancel="onValueHelpDialogClose"
+		showClearButton="false"
+		items="{/}">
+		<StandardListItem 
+			selected="{selected}"
+			title="{Priok} : {Name}"
+			type="Active" />
+	</SelectDialog>
+</core:FragmentDefinition>
